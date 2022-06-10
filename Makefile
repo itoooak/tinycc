@@ -6,6 +6,6 @@ test: tinycc
 	./test.sh
 
 clean:
-	rm tinycc tmp*
+	rm -f tinycc tmp*
 
 .PHONY: test clean
