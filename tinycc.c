@@ -19,12 +19,27 @@ struct Token {
     char *str;
 };
 
+char *user_input;
+
 // Current token
 Token *token;
 
 void error(char *fmt, ...) {
     va_list ap;
     va_start(ap, fmt);
+    vfprintf(stderr, fmt, ap);
+    fprintf(stderr, "\n");
+    exit(1);
+}
+
+void error_at(char *loc, char *fmt, ...) {
+    va_list ap;
+    va_start(ap, fmt);
+
+    int pos = loc - user_input;
+    fprintf(stderr, "%s\n", user_input);
+    fprintf(stderr, "%*s", pos, " ");
+    fprintf(stderr, "^ ");
     vfprintf(stderr, fmt, ap);
     fprintf(stderr, "\n");
     exit(1);
@@ -45,7 +60,7 @@ void expect(char op) {
 
 int expect_number() {
     if (token->kind != TK_NUM)
-        error("expected a number");
+        error_at(token->str, "expected a number");
     int val = token->val;
     token = token-> next;
     return val;
@@ -85,7 +100,7 @@ Token *tokenize(char *p) {
             continue;
         }
 
-        error("不正なトークンです");
+        error_at(p, "不正なトークンです");
     }
 
     new_token(TK_EOF, cur, p);
@@ -102,7 +117,8 @@ int main(int argc, char **argv) {
     printf(".globl main\n");
     printf("main:\n");
 
-    token = tokenize(argv[1]);
+    user_input = argv[1];
+    token = tokenize(user_input);
 
     printf("    mov rax, %d\n", expect_number());
 
