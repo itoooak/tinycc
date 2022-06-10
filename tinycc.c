@@ -62,7 +62,7 @@ int expect_number() {
     if (token->kind != TK_NUM)
         error_at(token->str, "expected a number");
     int val = token->val;
-    token = token-> next;
+    token = token->next;
     return val;
 }
 
