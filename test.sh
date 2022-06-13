@@ -4,7 +4,6 @@ assert() {
     expected="$1"
     input="$2"
 
-    cc -o tinycc tinycc.c
     ./tinycc "$input" > tmp.s
     cc -o tmp tmp.s
     ./tmp
