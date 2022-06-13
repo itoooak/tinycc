@@ -28,5 +28,9 @@ assert 99 "4/3+(99-1)"
 assert 1 " ( 10 - 7 ) / 2 * 1 "
 assert 7 "+7"
 assert 72 "-8*(-9)"
+assert 1 "3 == 3"
+assert 1 "10 != 16"
+assert 0 "0 < 1 <= 0"
+assert 1 "4 > -7 == 3 >= 3"
 
 echo OK
