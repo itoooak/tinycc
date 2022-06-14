@@ -18,18 +18,20 @@ assert() {
     fi
 }
 
-assert 0 0
-assert 222 222
-assert 73 "42+134-103"
-assert 81 " 3 - 122 + 200 "
-assert 54 "4+5*10"
-assert 99 "4/3+(99-1)"
-assert 1 " ( 10 - 7 ) / 2 * 1 "
-assert 7 "+7"
-assert 72 "-8*(-9)"
-assert 1 "3 == 3"
-assert 1 "10 != 16"
-assert 0 "0 < 1 <= 0"
-assert 1 "4 > -7 == 3 >= 3"
+assert 0 "0;"
+assert 222 "222;"
+assert 73 "42+134-103;"
+assert 81 " 3 - 122 + 200 ;"
+assert 54 "4+5*10;"
+assert 99 "4/3+(99-1);"
+assert 1 " ( 10 - 7 ) / 2 * 1 ;"
+assert 7 "+7;"
+assert 72 "-8*(-9);"
+assert 1 "3 == 3;"
+assert 1 "10 != 16;"
+assert 0 "0 < 1 <= 0;"
+assert 1 "4 > -7 == 3 >= 3;"
+assert 39 "a = -1; b = 42; z = 3; (z*a)+b;"
+assert 4 "c = d = 2; e = c * d; f = e * (1 / c * e); e;"
 
 echo OK
