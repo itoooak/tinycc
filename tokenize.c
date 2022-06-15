@@ -83,27 +83,23 @@ Token *tokenize(char *p) {
 
         if (!memcmp(p, "==", 2) || !memcmp(p, "!=", 2)) {
             cur = new_token(TK_RESERVED, cur, p, 2);
-            cur->len = 2;
             p += 2;
             continue;
         }
 
         if (!memcmp(p, "<=", 2) || !memcmp(p, ">=", 2)) {
             cur = new_token(TK_RESERVED, cur, p, 2);
-            cur->len = 2;
             p += 2;
             continue;
         }
 
         if (*p == '<' || *p == '>') {
             cur = new_token(TK_RESERVED, cur, p++, 1);
-            cur->len = 1;
             continue;
         }
 
         if (*p == '+' || *p == '-' || *p == '*' || *p == '/' || *p == '(' || *p == ')') {
             cur = new_token(TK_RESERVED, cur, p++, 1);
-            cur->len = 1;
             continue;
         }
 

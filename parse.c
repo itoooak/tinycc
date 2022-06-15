@@ -53,7 +53,7 @@ Node *equality() {
     while (true) {
         if (consume("=="))
             node = new_node(ND_EQ, node, relational());
-        else if (consume ("!="))
+        else if (consume("!="))
             node = new_node(ND_NE, node, relational());
         else
             return node;
