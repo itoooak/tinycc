@@ -118,8 +118,23 @@ Token *tokenize(char *p) {
             continue;
         }
 
-        if ('a' <= *p && *p <= 'z') {
-            cur = new_token(TK_IDENT, cur, p++, 1);
+        if (*p == '_' ||
+            ('a' <= *p && *p <= 'z') ||
+            ('A' <= *p && *p <= 'Z')) {
+            int i = 1;
+            for (;; i++) {
+                char c = *(p + i);
+                if (c == '_' ||
+                    ('a' <= c && c <= 'z') ||
+                    ('A' <= c && c <= 'Z') ||
+                    ('0' <= c && c <= '9'))
+                    continue;
+                else
+                    break;
+            }
+
+            cur = new_token(TK_IDENT, cur, p, i);
+            p += i;
             continue;
         }
 

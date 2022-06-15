@@ -66,6 +66,17 @@ struct Node {
 Node *new_node(NodeKind kind, Node *lhs, Node *rhs);
 Node *new_node_num(int val);
 
+// local variable
+typedef struct LVar LVar;
+struct LVar {
+    LVar *next;
+    char *name;
+    int len;
+    int offset;
+};
+
+LVar *find_lvar(Token *tok);
+
 void program();
 Node *stmt();
 Node *expr();
@@ -78,6 +89,7 @@ Node *unary();
 Node *primary();
 
 extern Node *code[100];
+extern LVar *locals;
 
 
 /* code generator */

@@ -2,6 +2,12 @@
 
 Node *code[100];
 
+// ローカル変数がそれ以前に存在していない場合でも
+// localsのoffsetにアクセスできるように初期化
+// (関数primary内でアクセスが起こる)
+LVar locals_init = { NULL, "", 0, 0 };
+LVar *locals = &locals_init;
+
 Node *new_node(NodeKind kind, Node *lhs, Node *rhs) {
     Node *node = calloc(1, sizeof(Node));
     node->kind = kind;
@@ -15,6 +21,15 @@ Node *new_node_num(int val) {
     node->kind = ND_NUM;
     node->val = val;
     return node;
+}
+
+LVar *find_lvar(Token *tok) {
+    for (LVar *var = locals; var; var = var->next)
+        if (var->len == tok->len &&
+            !memcmp(tok->str, var->name, var->len)) {
+            return var;
+        }
+    return NULL;
 }
 
 void program() {
@@ -125,7 +140,19 @@ Node *primary() {
     } else if (token->kind == TK_IDENT) {
         node = calloc(1, sizeof(Node));
         node->kind = ND_LVAR;
-        node->offset = (token->str[0] - 'a' + 1) * 8;
+
+        LVar *lvar = find_lvar(token);
+        if (lvar) {
+            node->offset = lvar->offset;
+        } else {
+            lvar = calloc(1, sizeof(LVar));
+            lvar->next = locals;
+            lvar->name = token->str;
+            lvar->len = token->len;
+            lvar->offset = locals->offset + 8;
+            node->offset = lvar->offset;
+            locals = lvar;
+        }
         token = token->next;
     } else {
         node = new_node_num(expect_number());

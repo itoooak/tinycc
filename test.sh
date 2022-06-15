@@ -33,5 +33,6 @@ assert 0 "0 < 1 <= 0;"
 assert 1 "4 > -7 == 3 >= 3;"
 assert 39 "a = -1; b = 42; z = 3; (z*a)+b;"
 assert 4 "c = d = 2; e = c * d; f = e * (1 / c * e); e;"
+assert 88 "eight = 8; eleven = 11; eight * eleven;"
 
 echo OK
