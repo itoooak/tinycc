@@ -35,5 +35,6 @@ assert 39 "a = -1; b = 42; z = 3; (z*a)+b;"
 assert 4 "c = d = 2; e = c * d; f = e * (1 / c * e); e;"
 assert 88 "eight = 8; eleven = 11; eight * eleven;"
 assert 3 "_ni=2; y_4=_ni*2; (y_4+_ni)/2;"
+assert 5 "___g_o=5; _=1; __=0; return ___g_o + __; __; _;"
 
 echo OK

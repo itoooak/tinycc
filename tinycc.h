@@ -12,6 +12,7 @@ typedef enum {
     TK_IDENT,       // Identifier
     TK_NUM,
     TK_EOF,         // End-of-file
+    TK_RETURN,
 } TokenKind;
 
 typedef struct Token Token;
@@ -29,6 +30,7 @@ bool consume(char *op);
 void expect(char *op);
 int expect_number();
 bool at_eof();
+bool is_alnum(char c);
 
 Token *new_token(TokenKind kind, Token *cur, char *str, int len);
 Token *new_token_num(Token *cur, int val);
@@ -52,6 +54,7 @@ typedef enum {
     ND_LE,
     ND_ASSIGN,
     ND_LVAR,    // local variable
+    ND_RETURN,
 } NodeKind;
 
 typedef struct Node Node;
