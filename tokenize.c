@@ -133,6 +133,20 @@ Token *tokenize(char *p) {
             continue;
         }
 
+        if (!strncmp(p, "if", 2) &&
+            !is_alnum(p[2])) {
+            cur = new_token(TK_IF, cur, p, 2);
+            p += 2;
+            continue;
+        }
+
+        if (!strncmp(p, "else", 4) &&
+            !is_alnum(p[4])) {
+            cur = new_token(TK_ELSE, cur, p, 4);
+            p += 4;
+            continue;
+        }
+
         if (*p == '_' ||
             ('a' <= *p && *p <= 'z') ||
             ('A' <= *p && *p <= 'Z')) {

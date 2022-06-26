@@ -36,6 +36,24 @@ void gen(Node *node) {
             printf("    pop rbp\n");
             printf("    ret\n");
             return;
+        case ND_IF:
+            gen(node->cond);
+            printf("    pop rax\n");
+            printf("    cmp rax, 0\n");
+            // elseがない
+            if (node->rhs == NULL) {
+                printf("    je .Lend%p\n", node);
+                gen(node->lhs);
+                printf(".Lend%p:\n", node);
+            } else {
+                printf("    je .Lelse%p\n", node);
+                gen(node->lhs);
+                printf("    jmp .Lend%p\n", node);
+                printf(".Lelse%p:\n", node);
+                gen(node->rhs);
+                printf(".Lend%p:\n", node);
+            }
+            return;
     }
 
     gen(node->lhs);

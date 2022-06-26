@@ -47,11 +47,24 @@ Node *stmt() {
     if (token->kind == TK_RETURN) {
         token = token->next;
         node = new_node(ND_RETURN, expr(), NULL);
+        expect(";");
+    } else if (token->kind == TK_IF) {
+        token = token->next;
+        node = new_node(ND_IF, NULL, NULL);
+
+        expect("(");
+        node->cond = expr();
+        expect(")");
+
+        node->lhs = stmt();
+        if (token->kind == TK_ELSE) {
+            token = token->next;
+            node->rhs = stmt();
+        }
     } else {
         node = expr();
+        expect(";");
     }
-
-    expect(";");
 
     return node;
 }
