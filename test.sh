@@ -38,5 +38,7 @@ assert 3 "_ni=2; y_4=_ni*2; (y_4+_ni)/2;"
 assert 5 "___g_o=5; _=1; __=0; return ___g_o + __; __; _;"
 assert 2 "if (1 == 1) return 2; 3; 4;"
 assert 0 "if (2 * 3 != 6) return 25; else return -9 - (-9);"
+assert 1 "return1 = 1; if (0) 1; return1;"
+assert 1 "ifa = 3; else_ =-1; return1 = 1; if (0) 1; ifa + else_ - return1;"
 
 echo OK
