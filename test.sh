@@ -41,5 +41,7 @@ assert 0 "if (2 * 3 != 6) return 25; else return -9 - (-9);"
 assert 1 "return1 = 1; if (0) 1; return1;"
 assert 1 "ifa = 3; else_ =-1; return1 = 1; if (0) 1; ifa + else_ - return1;"
 assert 2 "c = 1; if (c == 10) return 1; else if (0 == c-1) return 2; else return 3;"
+assert 128 "i = 1; while (i < 100) i = i*2; return i;"
+assert 1 "i = 1; while (1 == 2) i; i;"
 
 echo OK

@@ -61,6 +61,15 @@ Node *stmt() {
             token = token->next;
             node->rhs = stmt();
         }
+    } else if (token->kind == TK_WHILE) {
+        token = token->next;
+        node = new_node(ND_WHILE, NULL, NULL);
+
+        expect("(");
+        node->cond = expr();
+        expect(")");
+
+        node->lhs = stmt();
     } else {
         node = expr();
         expect(";");
