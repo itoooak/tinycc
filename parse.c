@@ -70,6 +70,25 @@ Node *stmt() {
         expect(")");
 
         node->lhs = stmt();
+    } else if (token->kind == TK_FOR) {
+        token = token->next;
+        node = new_node(ND_FOR, NULL, NULL);
+
+        expect("(");
+        if (!consume(";")) {
+            node->init = expr();
+            expect(";");
+        }
+        if (!consume(";")) {
+            node->cond = expr();
+            expect(";");
+        }
+        if (!consume(")")) {
+            node->lhs = expr();
+            expect(")");
+        }
+
+        node->rhs = stmt();
     } else {
         node = expr();
         expect(";");
