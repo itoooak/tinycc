@@ -56,10 +56,10 @@ Node *stmt() {
         node->cond = expr();
         expect(")");
 
-        node->lhs = stmt();
+        node->then = stmt();
         if (token->kind == TK_ELSE) {
             token = token->next;
-            node->rhs = stmt();
+            node->els = stmt();
         }
     } else if (token->kind == TK_WHILE) {
         token = token->next;
@@ -69,7 +69,7 @@ Node *stmt() {
         node->cond = expr();
         expect(")");
 
-        node->lhs = stmt();
+        node->then = stmt();
     } else if (token->kind == TK_FOR) {
         token = token->next;
         node = new_node(ND_FOR, NULL, NULL);
@@ -84,11 +84,11 @@ Node *stmt() {
             expect(";");
         }
         if (!consume(")")) {
-            node->lhs = expr();
+            node->step = expr();
             expect(")");
         }
 
-        node->rhs = stmt();
+        node->then = stmt();
     } else {
         node = expr();
         expect(";");

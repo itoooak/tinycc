@@ -70,8 +70,11 @@ struct Node {
     Node *lhs;      // left-hand side
     Node *rhs;      // right-hand side
     Node *cond;     // condition of ND_IF, ND_WHILE, ND_FOR
+    Node *then;     // statement executed if cond holds in ND_IF, ND_WHILE, ND_FOR
+    Node *els;      // statement executed if cond doesn't hold in ND_IF
     Node *init;     // initialization of ND_FOR
-    int val;
+    Node *step;     // expression evaluated after iteration of ND_FOR
+    int val;        // value of ND_NUM
     int offset;     // offset of ND_LVAR
 };
 
