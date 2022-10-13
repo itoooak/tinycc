@@ -89,6 +89,14 @@ Node *stmt() {
         }
 
         node->then = stmt();
+    } else if (consume("{")) {
+        node = new_node(ND_BLOCK, NULL, NULL);
+
+        Node *cur = node;
+        while (!consume("}")) {
+            cur->next = stmt();
+            cur = cur->next;
+        }
     } else {
         node = expr();
         expect(";");

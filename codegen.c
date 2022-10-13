@@ -80,6 +80,12 @@ void gen(Node *node) {
             printf(".Lend%p:\n", node);
             printf("    push 0\n");
             return;
+        case ND_BLOCK:
+            while (node->next) {
+                node = node->next;
+                gen(node);
+            }
+            return;
     }
 
     gen(node->lhs);

@@ -46,5 +46,7 @@ assert 1 "i = 1; while (1 == 2) i; return i;"
 assert 45 "s = 0; for (i=1; i<10; i=i+1) s = s+i; return s;"
 assert 6 "i = 0; for (; i<5; i=i+3) i=i; return i;"
 assert 7 "i=0; for(;;) if (i == 7) return i; else i = i+1;"
+assert 10 "s=0; for(i=0; i<=4;) { s = s + i; i = i + 1; } return s;"
+assert 0 "idx=10; while(idx!=0) { idx; idx = idx - 1; idx; } return idx;"
 
 echo OK

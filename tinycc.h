@@ -62,7 +62,10 @@ typedef enum {
     ND_IF,
     ND_WHILE,
     ND_FOR,
+    ND_BLOCK,
 } NodeKind;
+
+
 
 typedef struct Node Node;
 struct Node {
@@ -74,6 +77,7 @@ struct Node {
     Node *els;      // statement executed if cond doesn't hold in ND_IF
     Node *init;     // initialization of ND_FOR
     Node *step;     // expression evaluated after iteration of ND_FOR
+    Node *next;     // statement executed after this statement
     int val;        // value of ND_NUM
     int offset;     // offset of ND_LVAR
 };
