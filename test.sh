@@ -1,11 +1,17 @@
 #!/bin/bash
 
+cat << EOF > tmp2.c
+int nine() { return 9; }
+int seven() { return 7; }
+EOF
+cc -c tmp2.c
+
 assert() {
     expected="$1"
     input="$2"
 
     ./tinycc "$input" > tmp.s
-    cc -o tmp tmp.s
+    cc -o tmp tmp.s tmp2.o
     ./tmp
     
     actual="$?"
@@ -48,5 +54,7 @@ assert 6 "i = 0; for (; i<5; i=i+3) i=i; return i;"
 assert 7 "i=0; for(;;) if (i == 7) return i; else i = i+1;"
 assert 10 "s=0; for(i=0; i<=4;) { s = s + i; i = i + 1; } return s;"
 assert 0 "idx=10; while(idx!=0) { idx; idx = idx - 1; idx; } return idx;"
+assert 2 "return nine() - seven();"
+assert 63 "s = 0; for (i=0; i<seven(); i=i+1) { s = s + nine(); } return s;"
 
 echo OK

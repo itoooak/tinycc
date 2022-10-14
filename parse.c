@@ -196,21 +196,31 @@ Node *primary() {
         expect(")");
     } else if (token->kind == TK_IDENT) {
         node = calloc(1, sizeof(Node));
-        node->kind = ND_LVAR;
-
-        LVar *lvar = find_lvar(token);
-        if (lvar) {
-            node->offset = lvar->offset;
-        } else {
-            lvar = calloc(1, sizeof(LVar));
-            lvar->next = locals;
-            lvar->name = token->str;
-            lvar->len = token->len;
-            lvar->offset = locals->offset + 8;
-            node->offset = lvar->offset;
-            locals = lvar;
-        }
+        Token *tok = token;
         token = token->next;
+        if (consume("(")) {
+            expect(")");
+            node->kind = ND_FUNCCALL;
+            
+            char *funcname = calloc(tok->len + 1, sizeof(char));
+            strncpy(funcname, tok->str, tok->len);
+            node->funcname = funcname;
+        } else {
+            node->kind = ND_LVAR;
+
+            LVar *lvar = find_lvar(tok);
+            if (lvar) {
+                node->offset = lvar->offset;
+            } else {
+                lvar = calloc(1, sizeof(LVar));
+                lvar->next = locals;
+                lvar->name = tok->str;
+                lvar->len = tok->len;
+                lvar->offset = locals->offset + 8;
+                node->offset = lvar->offset;
+                locals = lvar;
+            }
+        }
     } else {
         node = new_node_num(expect_number());
     }

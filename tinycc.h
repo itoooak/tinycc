@@ -63,6 +63,7 @@ typedef enum {
     ND_WHILE,
     ND_FOR,
     ND_BLOCK,
+    ND_FUNCCALL,
 } NodeKind;
 
 
@@ -80,6 +81,7 @@ struct Node {
     Node *next;     // statement executed after this statement
     int val;        // value of ND_NUM
     int offset;     // offset of ND_LVAR
+    char *funcname; // name of function in ND_FUNCCALL
 };
 
 Node *new_node(NodeKind kind, Node *lhs, Node *rhs);
