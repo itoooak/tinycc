@@ -1,5 +1,8 @@
 #include "tinycc.h"
 
+const char *REG_NAME[ARG_NUM_MAX] = 
+    { "rdi", "rsi", "rdx", "rcx", "r8", "r9" };
+
 void gen_lval(Node *node) {
     if (node->kind != ND_LVAR)
         error("代入の左辺値が変数ではありません");
@@ -87,6 +90,8 @@ void gen(Node *node) {
             }
             return;
         case ND_FUNCCALL:
+            for (int i=0; i<ARG_NUM_MAX && node->funcargs[i]; i++)
+                printf("    mov %s, %d\n", REG_NAME[i], node->funcargs[i]->val);
             printf("    call %s\n", node->funcname);
             printf("    push rax\n");
             return;

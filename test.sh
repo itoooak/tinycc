@@ -3,6 +3,8 @@
 cat << EOF > tmp2.c
 int nine() { return 9; }
 int seven() { return 7; }
+int mean2(int a, int b) { return (a + b) / 2; }
+int sum6(int a, int b, int c, int d, int e, int f) { return a+b+c+d+e+f; }
 EOF
 cc -c tmp2.c
 
@@ -56,5 +58,7 @@ assert 10 "s=0; for(i=0; i<=4;) { s = s + i; i = i + 1; } return s;"
 assert 0 "idx=10; while(idx!=0) { idx; idx = idx - 1; idx; } return idx;"
 assert 2 "return nine() - seven();"
 assert 63 "s = 0; for (i=0; i<seven(); i=i+1) { s = s + nine(); } return s;"
+assert 15 "return mean2(19, 11);"
+assert 21 "return sum6(1, 2, 3, 4, 5, 6);"
 
 echo OK

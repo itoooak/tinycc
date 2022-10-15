@@ -66,7 +66,7 @@ typedef enum {
     ND_FUNCCALL,
 } NodeKind;
 
-
+#define ARG_NUM_MAX 6
 
 typedef struct Node Node;
 struct Node {
@@ -82,6 +82,7 @@ struct Node {
     int val;        // value of ND_NUM
     int offset;     // offset of ND_LVAR
     char *funcname; // name of function in ND_FUNCCALL
+    Node *funcargs[ARG_NUM_MAX];
 };
 
 Node *new_node(NodeKind kind, Node *lhs, Node *rhs);

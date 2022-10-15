@@ -199,8 +199,19 @@ Node *primary() {
         Token *tok = token;
         token = token->next;
         if (consume("(")) {
-            expect(")");
+            // function call
             node->kind = ND_FUNCCALL;
+
+            if (!consume(")")) {
+                for (int i=0; i<ARG_NUM_MAX; i++) {
+                    node->funcargs[i] = new_node_num(expect_number());
+
+                    if (consume(")"))
+                        break;
+                    
+                    expect(",");
+                }
+            }
             
             char *funcname = calloc(tok->len + 1, sizeof(char));
             strncpy(funcname, tok->str, tok->len);
