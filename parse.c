@@ -204,7 +204,7 @@ Node *primary() {
 
             if (!consume(")")) {
                 for (int i=0; i<ARG_NUM_MAX; i++) {
-                    node->funcargs[i] = new_node_num(expect_number());
+                    node->funcargs[i] = expr();
 
                     if (consume(")"))
                         break;

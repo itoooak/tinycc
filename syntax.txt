@@ -13,6 +13,6 @@ add         = mul ("+" mul | "-" mul)*
 mul         = unary ("*" unary | "/" unary)*
 unary       = ("+" | "-")? primary
 primary     = num
-            | ident ("(" (num ("," num)*)? ")")?
+            | ident ("(" (expr ("," expr)*)? ")")?
               /* ただし関数呼び出しの引数は6個まで */
             | "(" expr ")"

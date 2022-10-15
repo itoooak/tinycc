@@ -60,5 +60,6 @@ assert 2 "return nine() - seven();"
 assert 63 "s = 0; for (i=0; i<seven(); i=i+1) { s = s + nine(); } return s;"
 assert 15 "return mean2(19, 11);"
 assert 21 "return sum6(1, 2, 3, 4, 5, 6);"
+assert 2 "return mean2(sum6(1, 2, 4-1, 8/2, -1, -3), -2);"
 
 echo OK

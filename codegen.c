@@ -91,7 +91,9 @@ void gen(Node *node) {
             return;
         case ND_FUNCCALL:
             for (int i=0; i<ARG_NUM_MAX && node->funcargs[i]; i++)
-                printf("    mov %s, %d\n", REG_NAME[i], node->funcargs[i]->val);
+                gen(node->funcargs[i]);
+            for (int i=0; i<ARG_NUM_MAX && node->funcargs[i]; i++)
+                printf("    pop %s\n", REG_NAME[i]);
             printf("    call %s\n", node->funcname);
             printf("    push rax\n");
             return;
