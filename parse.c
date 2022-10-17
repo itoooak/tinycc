@@ -204,7 +204,7 @@ Node *primary() {
             node->argsnum = 0;
 
             if (!consume(")")) {
-                for (int i=0; i<ARG_NUM_MAX; i++) {
+                for (int i = 0; i < ARG_NUM_MAX; i++) {
                     node->funcargs[i] = expr();
                     node->argsnum++;
 

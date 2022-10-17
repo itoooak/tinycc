@@ -43,14 +43,14 @@ void gen(Node *node) {
             gen(node->cond);
             printf("    pop rax\n");
             printf("    cmp rax, 0\n");
-            printf("    je .Lelse%p\n", node);
+            if (node->els)
+                printf("    je .Lelse%p\n", node);
+            else
+                printf("    je .Lend%p\n", node);
             gen(node->then);
             printf("    jmp .Lend%p\n", node);
-            printf(".Lelse%p:\n", node);
-            // elseがない
-            if (node->els == NULL) {
-                printf("    push 0\n");
-            } else {
+            if (node->els) {
+                printf(".Lelse%p:\n", node);
                 gen(node->els);
             }
             printf(".Lend%p:\n", node);
@@ -64,7 +64,6 @@ void gen(Node *node) {
             gen(node->then);
             printf("    jmp .Lstart%p\n", node);
             printf(".Lend%p:\n", node);
-            printf("    push 0\n");
             return;
         case ND_FOR:
             if (node->init)
@@ -81,7 +80,6 @@ void gen(Node *node) {
                 gen(node->step);
             printf("    jmp .Lstart%p\n", node);
             printf(".Lend%p:\n", node);
-            printf("    push 0\n");
             return;
         case ND_BLOCK:
             while (node->next) {
@@ -90,11 +88,9 @@ void gen(Node *node) {
             }
             return;
         case ND_FUNCCALL:
-            for (int i = node->argsnum - 1; i >= 0; i--) {
-                if (node->funcargs[i]);
-                    gen(node->funcargs[i]);
-            }
-            for (int i=0; i<ARG_NUM_MAX && node->funcargs[i]; i++)
+            for (int i = node->argsnum - 1; i >= 0; i--)
+                gen(node->funcargs[i]);
+            for (int i = 0; i < node->argsnum; i++)
                 printf("    pop %s\n", REG_NAME[i]);
             printf("    call %s\n", node->funcname);
             printf("    push rax\n");
