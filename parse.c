@@ -201,10 +201,12 @@ Node *primary() {
         if (consume("(")) {
             // function call
             node->kind = ND_FUNCCALL;
+            node->argsnum = 0;
 
             if (!consume(")")) {
                 for (int i=0; i<ARG_NUM_MAX; i++) {
                     node->funcargs[i] = expr();
+                    node->argsnum++;
 
                     if (consume(")"))
                         break;

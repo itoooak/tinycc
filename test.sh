@@ -5,6 +5,7 @@ int nine() { return 9; }
 int seven() { return 7; }
 int mean2(int a, int b) { return (a + b) / 2; }
 int sum6(int a, int b, int c, int d, int e, int f) { return a+b+c+d+e+f; }
+int a(int a, int b) { return 2*a + b; }
 EOF
 cc -c tmp2.c
 
@@ -61,5 +62,7 @@ assert 63 "s = 0; for (i=0; i<seven(); i=i+1) { s = s + nine(); } return s;"
 assert 15 "return mean2(19, 11);"
 assert 21 "return sum6(1, 2, 3, 4, 5, 6);"
 assert 2 "return mean2(sum6(1, 2, 4-1, 8/2, -1, -3), -2);"
+assert 5 "return a(2, 1);"
+assert 4 "return a(1, 2);"
 
 echo OK

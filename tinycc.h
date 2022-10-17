@@ -83,6 +83,7 @@ struct Node {
     int offset;     // offset of ND_LVAR
     char *funcname; // name of function in ND_FUNCCALL
     Node *funcargs[ARG_NUM_MAX];
+    int argsnum;
 };
 
 Node *new_node(NodeKind kind, Node *lhs, Node *rhs);
