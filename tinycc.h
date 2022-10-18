@@ -46,6 +46,15 @@ extern Token *token;
 
 /* parser */
 
+// local variable
+typedef struct LVar LVar;
+struct LVar {
+    LVar *next;
+    char *name;
+    int len;
+    int offset;
+};
+
 typedef enum {
     ND_ADD,
     ND_SUB,
@@ -64,6 +73,7 @@ typedef enum {
     ND_FOR,
     ND_BLOCK,
     ND_FUNCCALL,
+    ND_FUNCDEF,
 } NodeKind;
 
 #define ARG_NUM_MAX 6
@@ -84,23 +94,17 @@ struct Node {
     char *funcname; // name of function in ND_FUNCCALL
     Node *funcargs[ARG_NUM_MAX];
     int argsnum;
+    Node *funcbody;
+    LVar *locals;
 };
 
 Node *new_node(NodeKind kind, Node *lhs, Node *rhs);
 Node *new_node_num(int val);
 
-// local variable
-typedef struct LVar LVar;
-struct LVar {
-    LVar *next;
-    char *name;
-    int len;
-    int offset;
-};
-
 LVar *find_lvar(Token *tok);
 
 void program();
+Node *func_def();
 Node *stmt();
 Node *expr();
 Node *assign();
@@ -113,6 +117,7 @@ Node *primary();
 
 extern Node *code[100];
 extern LVar *locals;
+extern Node *parsing_func;
 
 
 /* code generator */

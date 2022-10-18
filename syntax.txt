@@ -1,4 +1,6 @@
-program     = stmt*
+program     = func_def+
+func_def    = ident "(" (ident ("," ident)*)? ")" "{" stmt* "}"
+              /* ただし関数定義の引数は6個まで */
 stmt        = expr ";" 
             | "return" expr ";"
             | "if" "(" expr ")" stmt ("else" stmt)?

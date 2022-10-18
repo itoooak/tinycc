@@ -6,7 +6,8 @@ Node *code[100];
 // localsのoffsetにアクセスできるように初期化
 // (関数primary内でアクセスが起こる)
 LVar locals_init = { NULL, "", 0, 0 };
-LVar *locals = &locals_init;
+
+Node *parsing_func;
 
 Node *new_node(NodeKind kind, Node *lhs, Node *rhs) {
     Node *node = calloc(1, sizeof(Node));
@@ -24,7 +25,7 @@ Node *new_node_num(int val) {
 }
 
 LVar *find_lvar(Token *tok) {
-    for (LVar *var = locals; var; var = var->next)
+    for (LVar *var = parsing_func->locals; var; var = var->next)
         if (var->len == tok->len &&
             !memcmp(tok->str, var->name, var->len)) {
             return var;
@@ -35,10 +36,60 @@ LVar *find_lvar(Token *tok) {
 void program() {
     int idx = 0;
     while (!at_eof())
-        code[idx++] = stmt();
+        code[idx++] = func_def();
 
     code[idx] = NULL;
     return;
+}
+
+Node *func_def() {
+    Node *node = new_node(ND_FUNCDEF, NULL, NULL);
+
+    parsing_func = node;
+
+    if (token->kind != TK_IDENT)
+        printf("expected an identifier\n");
+    
+    char *funcname = calloc(token->len + 1, sizeof(char));
+    strncpy(funcname, token->str, token->len);
+    node->funcname = funcname;
+    token = token->next;
+
+    expect("(");
+
+    node->argsnum = 0;
+
+    node->locals = &locals_init;
+
+    if (!consume(")")) {
+        for (int i = 0; i < ARG_NUM_MAX; i++) {
+            LVar *lvar = calloc(1, sizeof(LVar));
+            lvar->next = parsing_func->locals;
+            lvar->name = token->str;
+            lvar->len = token->len;
+            lvar->offset = parsing_func->locals->offset + 8;
+            parsing_func->locals = lvar;
+
+            node->argsnum++;
+
+            token = token->next;
+
+            if (consume(")"))
+                break;
+            
+            expect(",");
+        }
+    }
+
+    expect("{");
+    Node *cur = node->funcbody = new_node(ND_BLOCK, NULL, NULL);
+    cur->kind = ND_BLOCK;
+    while (!consume("}")) {
+        cur->next = stmt();
+        cur = cur->next;
+    }
+
+    return node;
 }
 
 Node *stmt() {
@@ -226,12 +277,12 @@ Node *primary() {
                 node->offset = lvar->offset;
             } else {
                 lvar = calloc(1, sizeof(LVar));
-                lvar->next = locals;
+                lvar->next = parsing_func->locals;
                 lvar->name = tok->str;
                 lvar->len = tok->len;
-                lvar->offset = locals->offset + 8;
+                lvar->offset = parsing_func->locals->offset + 8;
                 node->offset = lvar->offset;
-                locals = lvar;
+                parsing_func->locals = lvar;
             }
         }
     } else {

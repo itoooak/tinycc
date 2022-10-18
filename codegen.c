@@ -12,6 +12,25 @@ void gen_lval(Node *node) {
     printf("    push rax\n");
 }
 
+void gen_funcdef(Node *node) {
+    printf("%s:\n", node->funcname);
+
+    // prologue
+    printf("    push rbp\n");
+    printf("    mov rbp, rsp\n");
+    printf("    sub rsp, %d\n", node->locals->offset);
+
+    for (int i = 0; i < node->argsnum; i++)
+        printf("    mov [rbp-%d], %s\n", 8*(i+1), REG_NAME[i]);
+
+    gen(node->funcbody);
+    
+    // epilogue
+    printf("    mov rsp, rbp\n");
+    printf("    pop rbp\n");
+    printf("    ret\n");
+}
+
 void gen(Node *node) {
     switch (node->kind) {
         case ND_NUM:
@@ -94,6 +113,9 @@ void gen(Node *node) {
                 printf("    pop %s\n", REG_NAME[i]);
             printf("    call %s\n", node->funcname);
             printf("    push rax\n");
+            return;
+        case ND_FUNCDEF:
+            gen_funcdef(node);
             return;
     }
 
