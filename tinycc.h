@@ -74,6 +74,8 @@ typedef enum {
     ND_BLOCK,
     ND_FUNCCALL,
     ND_FUNCDEF,
+    ND_ADDR,
+    ND_DEREF,
 } NodeKind;
 
 #define ARG_NUM_MAX 6
@@ -122,5 +124,5 @@ extern Node *parsing_func;
 
 /* code generator */
 
-void gen_lval(Node *node);
+void gen_addr(Node *node);
 void gen(Node *node);

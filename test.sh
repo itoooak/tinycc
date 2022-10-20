@@ -69,5 +69,9 @@ assert 5 "b(a,b){ return a*3+b; } main() { a=1; b=2; return b(a,b); }"
 assert 13 \
 "fib(n) { if (n==1) return 0; else if (n==2) return 1; else return fib(n-1) + fib(n-2); }
 main() { return fib(1+3+1+3); }"
+assert 9 "main() { a = 9; return *&a; }"
+assert 7 "main() { a = 7; b = &a; c = &b; d = &b; if (c == d) return **c; else return 0; }"
+assert 5 "main() { a = 12; b = &a; *b = *b - 7; return a; }"
+assert 3 "main() { a = 3; b = 5; return *(&b + (&a - &b)); }"
 
 echo OK

@@ -130,6 +130,11 @@ Token *tokenize(char *p) {
             continue;
         }
 
+        if (*p == '&') {
+            cur = new_token(TK_RESERVED, cur, p++, 1);
+            continue;
+        }
+
         if (isdigit(*p)) {
             cur = new_token_num(cur, strtol(p, &p, 10));
             continue;
