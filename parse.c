@@ -81,13 +81,7 @@ Node *func_def() {
         }
     }
 
-    expect("{");
-    Node *cur = node->funcbody = new_node(ND_BLOCK, NULL, NULL);
-    cur->kind = ND_BLOCK;
-    while (!consume("}")) {
-        cur->next = stmt();
-        cur = cur->next;
-    }
+    node->funcbody = compound_stmt();
 
     return node;
 }
@@ -140,17 +134,26 @@ Node *stmt() {
         }
 
         node->then = stmt();
-    } else if (consume("{")) {
-        node = new_node(ND_BLOCK, NULL, NULL);
-
-        Node *cur = node;
-        while (!consume("}")) {
-            cur->next = stmt();
-            cur = cur->next;
-        }
+    } else if (token->kind == TK_RESERVED &&
+               token->len == 1 &&
+               *(token->str) == '{') {
+        node = compound_stmt();
     } else {
         node = expr();
         expect(";");
+    }
+
+    return node;
+}
+
+Node *compound_stmt() {
+    expect("{");
+
+    Node *node = new_node(ND_BLOCK, NULL, NULL);
+    Node *cur = node;
+    while (!consume("}")) {
+        cur->next = stmt();
+        cur = cur->next;
     }
 
     return node;

@@ -108,6 +108,7 @@ LVar *find_lvar(Token *tok);
 void program();
 Node *func_def();
 Node *stmt();
+Node *compound_stmt();
 Node *expr();
 Node *assign();
 Node *equality();
