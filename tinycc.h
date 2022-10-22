@@ -17,6 +17,7 @@ typedef enum {
     TK_ELSE,
     TK_WHILE,
     TK_FOR,
+    TK_INT,
 } TokenKind;
 
 typedef struct Token Token;
@@ -76,6 +77,7 @@ typedef enum {
     ND_FUNCDEF,
     ND_ADDR,
     ND_DEREF,
+    ND_DECL,
 } NodeKind;
 
 #define ARG_NUM_MAX 6
@@ -109,6 +111,7 @@ void program();
 Node *func_def();
 Node *stmt();
 Node *compound_stmt();
+Node *declaration();
 Node *expr();
 Node *assign();
 Node *equality();

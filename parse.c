@@ -47,8 +47,12 @@ Node *func_def() {
 
     parsing_func = node;
 
+    if (token->kind != TK_INT)
+        error_at(token->str, "expected a typename");
+    token = token->next;
+
     if (token->kind != TK_IDENT)
-        printf("expected an identifier\n");
+        error_at(token->str, "expected an identifier\n");
     
     char *funcname = calloc(token->len + 1, sizeof(char));
     strncpy(funcname, token->str, token->len);
@@ -63,6 +67,10 @@ Node *func_def() {
 
     if (!consume(")")) {
         for (int i = 0; i < ARG_NUM_MAX; i++) {
+            if (token->kind != TK_INT)
+                    error_at(token->str, "expected a typename");
+            token = token->next;
+
             LVar *lvar = calloc(1, sizeof(LVar));
             lvar->next = parsing_func->locals;
             lvar->name = token->str;
@@ -152,9 +160,43 @@ Node *compound_stmt() {
     Node *node = new_node(ND_BLOCK, NULL, NULL);
     Node *cur = node;
     while (!consume("}")) {
-        cur->next = stmt();
+        if (token->kind == TK_INT)
+            cur->next = declaration();
+        else
+            cur->next = stmt();
         cur = cur->next;
     }
+
+    return node;
+}
+
+Node *declaration() {
+    if (token->kind != TK_INT)
+        error_at(token->str, "expected a typename");
+    token = token->next;
+    
+    Node *node = new_node(ND_DECL, NULL, NULL);
+
+    if (token->kind != TK_IDENT)
+        error_at(token->str, "expected an identifier");
+    
+    LVar *lvar = find_lvar(token);
+    if (lvar) {
+        char *name = calloc(token->len + 1, sizeof(char));
+        strncpy(name, token->str, token->len);
+        error_at(token->str, "redeclaration of '%s'", name);
+    } else {
+        lvar = calloc(1, sizeof(LVar));
+        lvar->next = parsing_func->locals;
+        lvar->name = token->str;
+        lvar->len = token->len;
+        lvar->offset = parsing_func->locals->offset + 8;
+        node->offset = lvar->offset;
+        parsing_func->locals = lvar;
+    }
+    token = token->next;
+
+    expect(";");
 
     return node;
 }
@@ -283,13 +325,9 @@ Node *primary() {
             if (lvar) {
                 node->offset = lvar->offset;
             } else {
-                lvar = calloc(1, sizeof(LVar));
-                lvar->next = parsing_func->locals;
-                lvar->name = tok->str;
-                lvar->len = tok->len;
-                lvar->offset = parsing_func->locals->offset + 8;
-                node->offset = lvar->offset;
-                parsing_func->locals = lvar;
+                char *name = calloc(tok->len + 1, sizeof(char));
+                strncpy(name, tok->str, tok->len);
+                error_at(tok->str, "variable '%s' does not exist", name);
             }
         }
     } else {

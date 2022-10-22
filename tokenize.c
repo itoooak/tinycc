@@ -175,6 +175,13 @@ Token *tokenize(char *p) {
             p += 3;
             continue;
         }
+        
+        if (!strncmp(p, "int", 3) &&
+            !is_alnum(p[3])) {
+            cur = new_token(TK_INT, cur, p, 3);
+            p += 3;
+            continue;
+        }
 
         if (*p == '_' ||
             ('a' <= *p && *p <= 'z') ||
