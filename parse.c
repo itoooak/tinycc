@@ -47,9 +47,7 @@ Node *func_def() {
 
     parsing_func = node;
 
-    if (token->kind != TK_INT)
-        error_at(token->str, "expected a typename");
-    token = token->next;
+    node->type = type();
 
     if (token->kind != TK_IDENT)
         error_at(token->str, "expected an identifier\n");
@@ -67,11 +65,8 @@ Node *func_def() {
 
     if (!consume(")")) {
         for (int i = 0; i < ARG_NUM_MAX; i++) {
-            if (token->kind != TK_INT)
-                    error_at(token->str, "expected a typename");
-            token = token->next;
-
             LVar *lvar = calloc(1, sizeof(LVar));
+            lvar->type = type();
             lvar->next = parsing_func->locals;
             lvar->name = token->str;
             lvar->len = token->len;
@@ -171,11 +166,8 @@ Node *compound_stmt() {
 }
 
 Node *declaration() {
-    if (token->kind != TK_INT)
-        error_at(token->str, "expected a typename");
-    token = token->next;
-    
     Node *node = new_node(ND_DECL, NULL, NULL);
+    node->type = type();
 
     if (token->kind != TK_IDENT)
         error_at(token->str, "expected an identifier");
@@ -199,6 +191,25 @@ Node *declaration() {
     expect(";");
 
     return node;
+}
+
+Type *type() {
+    if (token->kind != TK_INT)
+        error_at(token->str, "expected a typename");
+    token = token->next;
+
+    Type *ty = calloc(1, sizeof(Type));
+    ty->kind = TY_INT;
+    ty->ptr_to = NULL;
+
+    while (consume("*")) {
+        Type *tmp = calloc(1, sizeof(Type));
+        tmp->kind = TY_PTR;
+        tmp->ptr_to = ty;
+        ty = tmp;
+    }
+
+    return ty;
 }
 
 Node *expr() {

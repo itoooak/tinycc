@@ -47,6 +47,17 @@ extern Token *token;
 
 /* parser */
 
+typedef enum {
+    TY_INT,
+    TY_PTR,
+} TypeKind;
+
+typedef struct Type Type;
+struct Type {
+    TypeKind kind;
+    Type *ptr_to;
+};
+
 // local variable
 typedef struct LVar LVar;
 struct LVar {
@@ -54,6 +65,7 @@ struct LVar {
     char *name;
     int len;
     int offset;
+    Type *type;
 };
 
 typedef enum {
@@ -100,6 +112,7 @@ struct Node {
     int argsnum;
     Node *funcbody;
     LVar *locals;
+    Type *type;
 };
 
 Node *new_node(NodeKind kind, Node *lhs, Node *rhs);
@@ -112,6 +125,7 @@ Node *func_def();
 Node *stmt();
 Node *compound_stmt();
 Node *declaration();
+Type *type();
 Node *expr();
 Node *assign();
 Node *equality();

@@ -74,8 +74,8 @@ assert 13 \
 int main() { return fib(1+3+1+3); }"
 
 assert 9 "int main() { int a; a=9; return *&a; }"
-assert 7 "int main() { int a; int b; int c; int d; a=7; b=&a; c=&b; d=&b; if (c==d) return **c; else return 0; }"
-assert 5 "int main() { int a; int b; a=12; b=&a; *b=*b-7; return a; }"
+assert 7 "int main() { int a; int *b; int **c; int **d; a=7; b=&a; c=&b; d=&b; if (c==d) return **c; else return 0; }"
+assert 5 "int main() { int a; int *b; a=12; b=&a; *b=*b-7; return a; }"
 assert 3 "int main() { int a; int b; a=3; b=5; return *(&b+(&a-&b)); }"
 
 echo OK

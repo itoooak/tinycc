@@ -1,5 +1,5 @@
 program       = func_def+
-func_def      = "int" ident "(" ("int" ident ("," "int" ident)*)? ")" compound_stmt
+func_def      = type ident "(" (type ident ("," type ident)*)? ")" compound_stmt
                 /* ただし関数定義の引数は6個まで */
 stmt          = expr ";" 
               | "return" expr ";"
@@ -8,7 +8,8 @@ stmt          = expr ";"
               | "for" "(" expr? ";" expr? ";" expr? ")" stmt
               | compound_stmt
 compound_stmt = "{" (stmt | declaration)* "}"
-declaration   = "int" ident ";"
+declaration   = type ident ";"
+type          = "int" "*"*
 expr          = assign
 assign        = equality ("=" assign)?
 equality      = relational ("==" relational | "!=" relational)*
