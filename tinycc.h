@@ -143,4 +143,5 @@ extern Node *parsing_func;
 
 void gen_addr(Node *node);
 void gen_funcdef(Node *node);
+void gen_funccall(Node *node);
 void gen(Node *node);

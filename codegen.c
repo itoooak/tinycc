@@ -35,6 +35,32 @@ void gen_funcdef(Node *node) {
     printf("    ret\n");
 }
 
+void gen_funccall(Node *node) {
+    for (int i = node->argsnum - 1; i >= 0; i--)
+        gen(node->funcargs[i]);
+    for (int i = 0; i < node->argsnum; i++)
+        printf("    pop %s\n", REG_NAME[i]);
+
+    // align RSP to 16-byte boundary
+    // 現在、RSPは8の倍数にしかなりえない
+    printf("    mov rax, rsp\n");
+    printf("    and rax, 0b1111\n");
+    printf("    je .Laligned%p\n", node);
+
+    printf("    sub rsp, 8\n");
+    printf("    mov rax, 0\n");
+    printf("    call %s\n", node->funcname);
+    printf("    add rsp, 8\n");
+    printf("    jmp .Lend%p\n", node);
+
+    printf("    .Laligned%p:\n", node);
+    printf("    mov rax, 0\n");
+    printf("    call %s\n", node->funcname);
+
+    printf("    .Lend%p:\n", node);
+    printf("    push rax\n");
+}
+
 void gen(Node *node) {
     switch (node->kind) {
         case ND_NUM:
@@ -111,12 +137,7 @@ void gen(Node *node) {
             }
             return;
         case ND_FUNCCALL:
-            for (int i = node->argsnum - 1; i >= 0; i--)
-                gen(node->funcargs[i]);
-            for (int i = 0; i < node->argsnum; i++)
-                printf("    pop %s\n", REG_NAME[i]);
-            printf("    call %s\n", node->funcname);
-            printf("    push rax\n");
+            gen_funccall(node);
             return;
         case ND_FUNCDEF:
             gen_funcdef(node);
