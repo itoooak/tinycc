@@ -136,11 +136,11 @@ Node *unary();
 Node *primary();
 
 extern Node *code[100];
-extern LVar *locals;
 extern Node *parsing_func;
 
 
 /* code generator */
 
 void gen_addr(Node *node);
+void gen_funcdef(Node *node);
 void gen(Node *node);
