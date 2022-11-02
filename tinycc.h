@@ -120,6 +120,9 @@ Node *new_node_num(int val);
 
 LVar *find_lvar(Token *tok);
 
+int size_of(Type *type);
+int align_to(int cur_offset, int boundary);
+
 void program();
 Node *func_def();
 Node *stmt();

@@ -1,7 +1,10 @@
 #include "tinycc.h"
 
-const char *REG_NAME[ARG_NUM_MAX] = 
+const char *arg_reg_8byte[ARG_NUM_MAX] = 
     { "rdi", "rsi", "rdx", "rcx", "r8", "r9" };
+
+const char *arg_reg_4byte[ARG_NUM_MAX] = 
+    { "edi", "esi", "edx", "ecx", "r8d", "r9d" };
 
 void gen_addr(Node *node) {
     switch (node->kind) {
@@ -27,7 +30,7 @@ void gen_funcdef(Node *node) {
     printf("    sub rsp, %d\n", node->locals->offset);
 
     for (int i = 0; i < node->argsnum; i++)
-        printf("    mov [rbp-%d], %s\n", 8*(i+1), REG_NAME[i]);
+        printf("    mov [rbp-%d], %s\n", 8*(i+1), arg_reg_8byte[i]);
 
     gen(node->funcbody);
     
@@ -42,7 +45,7 @@ void gen_funccall(Node *node) {
     for (int i = node->argsnum - 1; i >= 0; i--)
         gen(node->funcargs[i]);
     for (int i = 0; i < node->argsnum; i++)
-        printf("    pop %s\n", REG_NAME[i]);
+        printf("    pop %s\n", arg_reg_8byte[i]);
 
     // align RSP to 16-byte boundary
     printf("    mov r12, rsp\n");
