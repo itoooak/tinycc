@@ -26,6 +26,8 @@ void gen_funcdef(Node *node) {
     printf("    push rbp\n");
     // R12は関数呼び出し時のアラインメントに使う
     printf("    push r12\n");
+    // RSPを16の倍数にするためにもう一回push
+    printf("    push r13\n");
     printf("    mov rbp, rsp\n");
     printf("    sub rsp, %d\n", node->locals->offset);
 
@@ -36,6 +38,7 @@ void gen_funcdef(Node *node) {
     
     // epilogue
     printf("    mov rsp, rbp\n");
+    printf("    pop r13\n");
     printf("    pop r12\n");
     printf("    pop rbp\n");
     printf("    ret\n");
@@ -81,6 +84,7 @@ void gen(Node *node) {
             gen(node->lhs);
             printf("    pop rax\n");
             printf("    mov rsp, rbp\n");
+            printf("    pop r13\n");
             printf("    pop r12\n");
             printf("    pop rbp\n");
             printf("    ret\n");
