@@ -21,6 +21,8 @@ void gen_funcdef(Node *node) {
 
     // prologue
     printf("    push rbp\n");
+    // R12は関数呼び出し時のアラインメントに使う
+    printf("    push r12\n");
     printf("    mov rbp, rsp\n");
     printf("    sub rsp, %d\n", node->locals->offset);
 
@@ -31,6 +33,7 @@ void gen_funcdef(Node *node) {
     
     // epilogue
     printf("    mov rsp, rbp\n");
+    printf("    pop r12\n");
     printf("    pop rbp\n");
     printf("    ret\n");
 }
@@ -42,22 +45,12 @@ void gen_funccall(Node *node) {
         printf("    pop %s\n", REG_NAME[i]);
 
     // align RSP to 16-byte boundary
-    // 現在、RSPは8の倍数にしかなりえない
-    printf("    mov rax, rsp\n");
-    printf("    and rax, 0b1111\n");
-    printf("    je .Laligned%p\n", node);
-
-    printf("    sub rsp, 8\n");
+    printf("    mov r12, rsp\n");
+    printf("    and r12, 0b1111\n");
+    printf("    sub rsp, r12\n");
     printf("    mov rax, 0\n");
     printf("    call %s\n", node->funcname);
-    printf("    add rsp, 8\n");
-    printf("    jmp .Lend%p\n", node);
-
-    printf("    .Laligned%p:\n", node);
-    printf("    mov rax, 0\n");
-    printf("    call %s\n", node->funcname);
-
-    printf("    .Lend%p:\n", node);
+    printf("    add rsp, r12\n");
     printf("    push rax\n");
 }
 
@@ -85,6 +78,7 @@ void gen(Node *node) {
             gen(node->lhs);
             printf("    pop rax\n");
             printf("    mov rsp, rbp\n");
+            printf("    pop r12\n");
             printf("    pop rbp\n");
             printf("    ret\n");
             return;
