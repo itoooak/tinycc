@@ -119,7 +119,10 @@ struct Node {
 Node *new_node(NodeKind kind, Node *lhs, Node *rhs);
 Node *new_node_num(int val);
 
+LVar *new_lvar(Type *ty, Token *tok);
 LVar *find_lvar(Token *tok);
+
+char *copy(char *from, int len);
 
 void program();
 Node *func_def();

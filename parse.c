@@ -24,6 +24,15 @@ Node *new_node_num(int val) {
     return node;
 }
 
+LVar *new_lvar(Type *ty, Token *tok) {
+    LVar *lvar = calloc(1, sizeof(LVar));
+    lvar->next = parsing_func->locals;
+    lvar->name = token->str;
+    lvar->len = token->len;
+    lvar->type = ty;
+    return lvar;
+}
+
 LVar *find_lvar(Token *tok) {
     for (LVar *var = parsing_func->locals; var; var = var->next)
         if (var->len == tok->len &&
@@ -31,6 +40,12 @@ LVar *find_lvar(Token *tok) {
             return var;
         }
     return NULL;
+}
+
+char *copy(char *from, int len) {
+    char *copy = calloc(len + 1, sizeof(char));
+    strncpy(copy, from, len);
+    return copy;
 }
 
 void program() {
@@ -51,10 +66,8 @@ Node *func_def() {
 
     if (token->kind != TK_IDENT)
         error_at(token->str, "expected an identifier\n");
-    
-    char *funcname = calloc(token->len + 1, sizeof(char));
-    strncpy(funcname, token->str, token->len);
-    node->funcname = funcname;
+
+    node->funcname = copy(token->str, token->len);
     token = token->next;
 
     expect("(");
@@ -65,13 +78,8 @@ Node *func_def() {
 
     if (!consume(")")) {
         for (int i = 0; i < ARG_NUM_MAX; i++) {
-            LVar *lvar = calloc(1, sizeof(LVar));
-            lvar->type = type();
-            lvar->next = parsing_func->locals;
-            lvar->name = token->str;
-            lvar->len = token->len;
-            lvar->is_arg = true;
-            parsing_func->locals = lvar;
+            node->locals = new_lvar(type(), token);
+            node->locals->is_arg = true;
 
             node->argsnum++;
 
@@ -174,18 +182,12 @@ Node *declaration() {
     
     LVar *lvar = find_lvar(token);
     if (lvar) {
-        char *name = calloc(token->len + 1, sizeof(char));
-        strncpy(name, token->str, token->len);
+        char *name = copy(token->str, token->len);
         error_at(token->str, "redeclaration of '%s'", name);
     } else {
-        lvar = calloc(1, sizeof(LVar));
-        lvar->next = parsing_func->locals;
-        lvar->name = token->str;
-        lvar->len = token->len;
-        lvar->type = node->type;
-        lvar->is_arg = false;
-        node->lvar = lvar;
-        parsing_func->locals = lvar;
+        node->lvar = new_lvar(node->type, token);
+        node->lvar->is_arg = false;
+        parsing_func->locals = node->lvar;
     }
     token = token->next;
 
@@ -326,10 +328,8 @@ Node *primary() {
                     expect(",");
                 }
             }
-            
-            char *funcname = calloc(tok->len + 1, sizeof(char));
-            strncpy(funcname, tok->str, tok->len);
-            node->funcname = funcname;
+
+            node->funcname = copy(tok->str, tok->len);
         } else {
             node->kind = ND_LVAR;
 
@@ -337,8 +337,7 @@ Node *primary() {
             if (lvar) {
                 node->lvar = lvar;
             } else {
-                char *name = calloc(tok->len + 1, sizeof(char));
-                strncpy(name, tok->str, tok->len);
+                char *name = copy(tok->str, tok->len);
                 error_at(tok->str, "variable '%s' does not exist", name);
             }
         }
