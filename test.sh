@@ -78,4 +78,6 @@ assert 7 "int main() { int a; int *b; int **c; int **d; a=7; b=&a; c=&b; d=&b; i
 assert 5 "int main() { int a; int *b; a=12; b=&a; *b=*b-7; return a; }"
 assert 3 "int main() { int a; int b; a=3; b=5; return *(&b+(&a-&b)); }"
 
+assert 3 "int foo(int a, int b) { int c; c = 3; return *(&b+8); } int main() { return foo(1, 3); }"
+
 echo OK

@@ -6,11 +6,24 @@ const char *arg_reg_8byte[ARG_NUM_MAX] =
 const char *arg_reg_4byte[ARG_NUM_MAX] = 
     { "edi", "esi", "edx", "ecx", "r8d", "r9d" };
 
+int size_of(Type *type) {
+    switch (type->kind) {
+        case TY_INT:
+            return 8;
+        case TY_PTR:
+            return 8;
+    }
+}
+
+int align_to(int cur_offset, int boundary) {
+    return (cur_offset + boundary - 1) / boundary * boundary;
+}
+
 void gen_addr(Node *node) {
     switch (node->kind) {
         case ND_LVAR:
             printf("    mov rax, rbp\n");
-            printf("    sub rax, %d\n", node->offset);
+            printf("    sub rax, %d\n", node->lvar->offset);
             printf("    push rax\n");
             return;
         case ND_DEREF:
@@ -29,10 +42,20 @@ void gen_funcdef(Node *node) {
     // RSPを16の倍数にするためにもう一回push
     printf("    push r13\n");
     printf("    mov rbp, rsp\n");
-    printf("    sub rsp, %d\n", node->locals->offset);
 
-    for (int i = 0; i < node->argsnum; i++)
-        printf("    mov [rbp-%d], %s\n", 8*(i+1), arg_reg_8byte[i]);
+    int prev_offset = 0;
+    int arg_idx = node->argsnum;
+    for (LVar *lvar = node->locals; lvar->next != NULL; prev_offset = lvar->offset, lvar = lvar->next) {
+        lvar->offset = align_to(prev_offset + size_of(lvar->type), size_of(lvar->type));
+        
+        if (lvar->is_arg) {
+            printf("    mov [rbp-%d], %s\n", lvar->offset, arg_reg_8byte[arg_idx-1]);
+            arg_idx--;
+        }
+    }
+    
+    int offset_sum = align_to(prev_offset, 16);
+    printf("    sub rsp, %d\n", offset_sum);
 
     gen(node->funcbody);
     

@@ -66,6 +66,7 @@ struct LVar {
     int len;
     int offset;
     Type *type;
+    bool is_arg;
 };
 
 typedef enum {
@@ -106,7 +107,7 @@ struct Node {
     Node *step;     // expression evaluated after iteration of ND_FOR
     Node *next;     // statement executed after this statement
     int val;        // value of ND_NUM
-    int offset;     // offset of ND_LVAR
+    LVar *lvar;     // ND_LVAR
     char *funcname; // name of function in ND_FUNCCALL
     Node *funcargs[ARG_NUM_MAX];
     int argsnum;
@@ -119,9 +120,6 @@ Node *new_node(NodeKind kind, Node *lhs, Node *rhs);
 Node *new_node_num(int val);
 
 LVar *find_lvar(Token *tok);
-
-int size_of(Type *type);
-int align_to(int cur_offset, int boundary);
 
 void program();
 Node *func_def();
@@ -143,6 +141,9 @@ extern Node *parsing_func;
 
 
 /* code generator */
+
+int size_of(Type *type);
+int align_to(int cur_offset, int boundary);
 
 void gen_addr(Node *node);
 void gen_funcdef(Node *node);

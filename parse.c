@@ -33,19 +33,6 @@ LVar *find_lvar(Token *tok) {
     return NULL;
 }
 
-int size_of(Type *type) {
-    switch (type->kind) {
-        case TY_INT:
-            return 8;
-        case TY_PTR:
-            return 8;
-    }
-}
-
-int align_to(int cur_offset, int boundary) {
-    return (cur_offset + boundary - 1) / boundary * boundary + boundary;
-}
-
 void program() {
     int idx = 0;
     while (!at_eof())
@@ -83,7 +70,7 @@ Node *func_def() {
             lvar->next = parsing_func->locals;
             lvar->name = token->str;
             lvar->len = token->len;
-            lvar->offset = align_to(parsing_func->locals->offset, size_of(lvar->type));
+            lvar->is_arg = true;
             parsing_func->locals = lvar;
 
             node->argsnum++;
@@ -196,7 +183,8 @@ Node *declaration() {
         lvar->name = token->str;
         lvar->len = token->len;
         lvar->type = node->type;
-        node->offset = lvar->offset = align_to(parsing_func->locals->offset, size_of(lvar->type));
+        lvar->is_arg = false;
+        node->lvar = lvar;
         parsing_func->locals = lvar;
     }
     token = token->next;
@@ -347,8 +335,7 @@ Node *primary() {
 
             LVar *lvar = find_lvar(tok);
             if (lvar) {
-                node->offset = lvar->offset;
-                node->type = lvar->type;
+                node->lvar = lvar;
             } else {
                 char *name = calloc(tok->len + 1, sizeof(char));
                 strncpy(name, tok->str, tok->len);
