@@ -1,6 +1,7 @@
 program       = func_def+
 func_def      = type ident "(" (type ident ("," type ident)*)? ")" compound_stmt
-                /* ただし関数定義の引数は6個まで */
+                /* ただし関数定義の引数は6個まで, かつ全てint型 */
+                /* 関数の返り値はint型のみ */
 stmt          = expr ";" 
               | "return" expr ";"
               | "if" "(" expr ")" stmt ("else" stmt)?
@@ -21,5 +22,5 @@ unary         = ("+" | "-")? primary
               | "*" unary
 primary       = num
               | ident ("(" (expr ("," expr)*)? ")")?
-                /* ただし関数呼び出しの引数は6個まで */
+                /* ただし関数呼び出しの引数は6個まで, かつ全てint型 */
               | "(" expr ")"
