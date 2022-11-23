@@ -70,6 +70,12 @@ Node *func_def() {
     node->funcname = copy(token->str, token->len);
     token = token->next;
 
+    FuncInfo *funcinfo = calloc(1, sizeof(FuncInfo));
+    funcinfo->next = funcinfo_list;
+    funcinfo->name = node->funcname;
+    funcinfo->type = node->type;
+    funcinfo_list = funcinfo;
+
     expect("(");
 
     node->argsnum = 0;

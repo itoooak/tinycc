@@ -6,14 +6,6 @@ const char *arg_reg_8byte[ARG_NUM_MAX] =
 const char *arg_reg_4byte[ARG_NUM_MAX] = 
     { "edi", "esi", "edx", "ecx", "r8d", "r9d" };
 
-int size_of(Type *type) {
-    switch (type->kind) {
-        case TY_INT:
-            return 8;
-        case TY_PTR:
-            return 8;
-    }
-}
 
 int align_to(int cur_offset, int boundary) {
     return (cur_offset + boundary - 1) / boundary * boundary;

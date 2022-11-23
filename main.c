@@ -10,6 +10,9 @@ int main(int argc, char **argv) {
     token = tokenize(user_input);
     program();
 
+    for (int i = 0; code[i]; i++)
+        add_typeinfo(code[i]);
+
     printf(".intel_syntax noprefix\n");
     printf(".globl main\n");
 

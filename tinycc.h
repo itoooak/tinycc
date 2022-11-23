@@ -108,7 +108,7 @@ struct Node {
     Node *next;     // statement executed after this statement
     int val;        // value of ND_NUM
     LVar *lvar;     // ND_LVAR
-    char *funcname; // name of function in ND_FUNCCALL
+    char *funcname; // name of function in ND_FUNCCALL, ND_FUNCDEF
     Node *funcargs[ARG_NUM_MAX];
     int argsnum;
     Node *funcbody;
@@ -143,9 +143,30 @@ extern Node *code[100];
 extern Node *parsing_func;
 
 
-/* code generator */
+/* type system */
+
+typedef struct FuncInfo FuncInfo;
+struct FuncInfo {
+    FuncInfo *next;
+    char *name;
+    Type *type;
+};
+
+extern FuncInfo *funcinfo_list;
+Type *functype(char *funcname);
+
+int is_same(Type *type1, Type *type2);
+int is_ptr(Type *type);
+Type *type_int();
+Type *type_ptr(Type *ptr_to);
 
 int size_of(Type *type);
+
+void add_typeinfo(Node *node);
+
+
+/* code generator */
+
 int align_to(int cur_offset, int boundary);
 
 void gen_addr(Node *node);
