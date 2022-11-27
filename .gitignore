@@ -1,3 +1,4 @@
 tinycc
 tmp*
 *.o
+.vscode/
