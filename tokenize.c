@@ -17,7 +17,7 @@ void error_at(char *loc, char *fmt, ...) {
 
     int pos = loc - user_input;
     fprintf(stderr, "%s\n", user_input);
-    fprintf(stderr, "%*s", pos, " ");
+    fprintf(stderr, "%*s", pos, "");
     fprintf(stderr, "^ ");
     vfprintf(stderr, fmt, ap);
     fprintf(stderr, "\n");
@@ -175,7 +175,7 @@ Token *tokenize(char *p) {
             p += 3;
             continue;
         }
-        
+
         if (!strncmp(p, "int", 3) &&
             !is_alnum(p[3])) {
             cur = new_token(TK_INT, cur, p, 3);
