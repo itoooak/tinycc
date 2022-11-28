@@ -60,13 +60,13 @@ assert 7 "int main(){ int i; i=0; for(;;) if (i==7) return i; else i=i+1; }"
 assert 10 "int main(){ int s; s=0; int i; for(i=0; i<=4;) { s=s+i; i=i+1; } return s; }"
 assert 0 "int main(){ int idx; idx=10; while(idx!=0) { idx; idx=idx-1; idx; } return idx; }"
 
-assert 2 "int main(){ return nine()-seven(); }"
-assert 63 "int main(){ int s; s=0; int i; for (i=0; i<seven(); i=i+1) { s=s+nine(); } return s; }"
-assert 15 "int main(){ return mean2(19,11); }"
-assert 21 "int main(){ return sum6(1,2,3,4,5,6); }"
-assert 2 "int main(){ return mean2(sum6(1,2,4-1,8/2,-1,-3),-2); }"
-assert 5 "int main(){ return a(2,1); }"
-assert 4 "int main(){ return a(1,2); }"
+# assert 2 "int main(){ return nine()-seven(); }"
+# assert 63 "int main(){ int s; s=0; int i; for (i=0; i<seven(); i=i+1) { s=s+nine(); } return s; }"
+# assert 15 "int main(){ return mean2(19,11); }"
+# assert 21 "int main(){ return sum6(1,2,3,4,5,6); }"
+# assert 2 "int main(){ return mean2(sum6(1,2,4-1,8/2,-1,-3),-2); }"
+# assert 5 "int main(){ return a(2,1); }"
+# assert 4 "int main(){ return a(1,2); }"
 
 assert 5 "int b(int a, int b){ return a*3+b; } int main() { int a; int b; a=1; b=2; return b(a,b); }"
 assert 13 \
@@ -76,8 +76,13 @@ int main() { return fib(1+3+1+3); }"
 assert 9 "int main() { int a; a=9; return *&a; }"
 assert 7 "int main() { int a; int *b; int **c; int **d; a=7; b=&a; c=&b; d=&b; if (c==d) return **c; else return 0; }"
 assert 5 "int main() { int a; int *b; a=12; b=&a; *b=*b-7; return a; }"
-assert 3 "int main() { int a; int b; a=3; b=5; return *(&b+(&a-&b)); }"
 
-assert 3 "int foo(int a, int b) { int c; c = 3; return *(&b+8); } int main() { return foo(1, 3); }"
+assert 2 "int main() { int a; int b; a = 3; b = 2; return *(&a+1); }"
+assert 3 "int foo(int a, int b) { int c; c = 3; return *(&b+1); } int main() { return foo(1, 3); }"
+
+assert 1 "int main() { int x; int y; x=1; y=2; return *(&y-1); }"
+assert 1 "int main() { int x; int y; x=1; y=2; return *(-1+&y); }"
+assert 2 "int main() { int x; int y; x=1; y=2; return *(&x+1); }"
+assert 2 "int main() { int x; int y; x=1; y=2; return *(1+&x); }"
 
 echo OK

@@ -169,6 +169,9 @@ void add_typeinfo(Node *node);
 
 int align_to(int cur_offset, int boundary);
 
+void load(Type *type);
+void store(Type *type);
+
 void gen_addr(Node *node);
 void gen_funcdef(Node *node);
 void gen_funccall(Node *node);

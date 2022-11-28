@@ -181,7 +181,7 @@ Node *compound_stmt() {
 
 Node *declaration() {
     Node *node = new_node(ND_DECL, NULL, NULL);
-    node->type = type();
+    Type *ty = type();
 
     if (token->kind != TK_IDENT)
         error_at(token->str, "expected an identifier");
@@ -193,6 +193,7 @@ Node *declaration() {
     } else {
         node->lvar = new_lvar(node->type, token);
         node->lvar->is_arg = false;
+        node->lvar->type = ty;
         parsing_func->locals = node->lvar;
     }
     token = token->next;

@@ -11,6 +11,44 @@ int align_to(int cur_offset, int boundary) {
     return (cur_offset + boundary - 1) / boundary * boundary;
 }
 
+// スタックの先頭が指しているアドレスに格納された値を取り出し、スタックにpush
+void load(Type *type) {
+    int size = size_of(type);
+
+    printf("    pop rax\n");
+
+    if (size == 4) {
+        printf("    mov eax, dword ptr [rax]\n");
+    } else if (size == 8) {
+        printf("    mov rax, [rax]\n");
+    } else {
+        error("不正な型の値のロードです");
+    }
+
+    printf("    push rax\n");
+}
+
+// スタックの先頭の値をスタックの2番目が指しているアドレスに格納
+// スタックの2番目だけがpopされ、先頭の値はスタックに残る
+void store(Type *type) {
+    int size = size_of(type);
+
+    printf("    pop rdi\n");
+    printf("    pop rax\n");
+
+    // 2の補数で表された整数型はより短いサイズに変換する際に
+    // 変換後のサイズで表現できる限り、変換前の下位の値が変換後の値に一致する
+    if (size == 4) {
+        printf("    mov [rax], edi\n");
+    } else if (size == 8) {
+        printf("    mov [rax], rdi\n");
+    } else {
+        error("不正な型の値のストアです");
+    }
+
+    printf("    push rdi\n");
+}
+
 void gen_addr(Node *node) {
     switch (node->kind) {
         case ND_LVAR:
@@ -41,7 +79,8 @@ void gen_funcdef(Node *node) {
         lvar->offset = align_to(prev_offset + size_of(lvar->type), size_of(lvar->type));
         
         if (lvar->is_arg) {
-            printf("    mov [rbp-%d], %s\n", lvar->offset, arg_reg_8byte[arg_idx-1]);
+            // 現時点で関数の引数はint型のみ
+            printf("    mov [rbp-%d], %s\n", lvar->offset, arg_reg_4byte[arg_idx-1]);
             arg_idx--;
         }
     }
@@ -83,17 +122,11 @@ void gen(Node *node) {
         case ND_ASSIGN:
             gen_addr(node->lhs);
             gen(node->rhs);
-
-            printf("    pop rdi\n");
-            printf("    pop rax\n");
-            printf("    mov [rax], rdi\n");
-            printf("    push rdi\n");
+            store(node->type);
             return;
         case ND_LVAR:
             gen_addr(node);
-            printf("    pop rax\n");
-            printf("    mov rax, [rax]\n");
-            printf("    push rax\n");
+            load(node->type);
             return;
         case ND_RETURN:
             gen(node->lhs);
@@ -163,9 +196,7 @@ void gen(Node *node) {
             return;
         case ND_DEREF:
             gen(node->lhs);
-            printf("    pop rax\n");
-            printf("    mov rax, [rax]\n");
-            printf("    push rax\n");
+            load(node->type);
             return;
         case ND_DECL:
             return;
@@ -179,9 +210,19 @@ void gen(Node *node) {
 
     switch (node->kind) {
         case ND_ADD:
+        // 起こりうるのは int + int, pointer + int, int + pointer の3パターンのみ
+            if (is_ptr(node->type)) {
+                if (!is_ptr(node->lhs->type))
+                    printf("    imul rax, %d\n", size_of(node->type->ptr_to));
+                else
+                    printf("    imul rdi, %d\n", size_of(node->type->ptr_to));
+            }
             printf("    add rax, rdi\n");
             break;
         case ND_SUB:
+        // 起こりうるのは int - int, pointer - int, pointer - pointer の3パターンのみ
+            if (is_ptr(node->type) && !is_ptr(node->rhs->type))
+                printf("    imul rdi, %d\n", size_of(node->type->ptr_to));
             printf("    sub rax, rdi\n");
             break;
         case ND_MUL:

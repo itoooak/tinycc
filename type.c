@@ -13,6 +13,8 @@ Type *functype(char *funcname) {
 
 // 2つの型を比較して、同じなら1、異なるなら0を返す
 int is_same(Type *type1, Type *type2) {
+    if (!type1 || !type2) return 0;
+
     if (type1->kind != type2->kind)
         return 0;
     else if (type1->kind == TY_PTR)
@@ -41,9 +43,11 @@ Type *type_ptr(Type *ptr_to) {
 }
 
 int size_of(Type *type) {
+    if (!type)
+        error("型の情報がありません");
     switch (type->kind) {
         case TY_INT:
-            return 8;
+            return 4;
         case TY_PTR:
             return 8;
     }
@@ -96,9 +100,10 @@ void add_typeinfo(Node *node) {
         case ND_LVAR:
             node->type = node->lvar->type;
             break;
-            break;
         case ND_FUNCCALL:
             node->type = functype(node->funcname);
+            for (int i = 0; node->funcargs[i] && i < ARG_NUM_MAX; i++)
+                add_typeinfo(node->funcargs[i]);
             break;
         case ND_FUNCDEF:
             // parseの段階で型付けされている
