@@ -11,6 +11,23 @@ int align_to(int cur_offset, int boundary) {
     return (cur_offset + boundary - 1) / boundary * boundary;
 }
 
+void gen_prologue() {
+    printf("    push rbp\n");
+    // R12は関数呼び出し時のアラインメントに使う
+    printf("    push r12\n");
+    // RSPを16の倍数にするためにもう一回push
+    printf("    push r13\n");
+    printf("    mov rbp, rsp\n");
+}
+
+void gen_epilogue() {
+    printf("    mov rsp, rbp\n");
+    printf("    pop r13\n");
+    printf("    pop r12\n");
+    printf("    pop rbp\n");
+    printf("    ret\n");
+}
+
 // スタックの先頭が指しているアドレスに格納された値を取り出し、スタックにpush
 void load(Type *type) {
     int size = size_of(type);
@@ -65,13 +82,7 @@ void gen_addr(Node *node) {
 void gen_funcdef(Node *node) {
     printf("%s:\n", node->funcname);
 
-    // prologue
-    printf("    push rbp\n");
-    // R12は関数呼び出し時のアラインメントに使う
-    printf("    push r12\n");
-    // RSPを16の倍数にするためにもう一回push
-    printf("    push r13\n");
-    printf("    mov rbp, rsp\n");
+    gen_prologue();
 
     int prev_offset = 0;
     int arg_idx = node->argsnum;
@@ -89,13 +100,8 @@ void gen_funcdef(Node *node) {
     printf("    sub rsp, %d\n", offset_sum);
 
     gen(node->funcbody);
-    
-    // epilogue
-    printf("    mov rsp, rbp\n");
-    printf("    pop r13\n");
-    printf("    pop r12\n");
-    printf("    pop rbp\n");
-    printf("    ret\n");
+
+    gen_epilogue();
 }
 
 void gen_funccall(Node *node) {
@@ -131,11 +137,7 @@ void gen(Node *node) {
         case ND_RETURN:
             gen(node->lhs);
             printf("    pop rax\n");
-            printf("    mov rsp, rbp\n");
-            printf("    pop r13\n");
-            printf("    pop r12\n");
-            printf("    pop rbp\n");
-            printf("    ret\n");
+            gen_epilogue();
             return;
         case ND_IF:
             gen(node->cond);
