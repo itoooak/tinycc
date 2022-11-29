@@ -114,10 +114,13 @@ struct Node {
     Node *funcbody;
     LVar *locals;
     Type *type;
+    char *str;
 };
 
-Node *new_node(NodeKind kind, Node *lhs, Node *rhs);
-Node *new_node_num(int val);
+Node *new_node(NodeKind kind, Token *tok);
+Node *new_node_unary(NodeKind kind, Node *child, Token *tok);
+Node *new_node_bin(NodeKind kind, Node *lhs, Node *rhs, Token *tok);
+Node *new_node_num(int val, Token *tok);
 
 LVar *new_lvar(Type *ty, Token *tok);
 LVar *find_lvar(Token *tok);

@@ -68,13 +68,17 @@ void add_typeinfo(Node *node) {
 
     switch (node->kind) {
         case ND_ADD:
-            // 加算は左右の辺に両方pointerをとることができない
-            if (is_ptr(node->lhs->type))
+            if (is_ptr(node->lhs->type) && is_ptr(node->rhs->type))
+                error_at(node->str, "加算は両辺にpointerをとることができません");
+            else if (is_ptr(node->lhs->type))
                 node->type = node->lhs->type;
             else
+                // int + int もしくは int + pointer
                 node->type = node->rhs->type;
             break;
         case ND_SUB:
+            if (is_same(node->lhs->type, type_int()) && is_ptr(node->rhs->type))
+                error_at(node->str, "intからpointerを引く減算はできません");
             // int - int, pointer - int, pointer - pointer の3パターンのみ
             node->type = node->lhs->type;
             break;
@@ -91,7 +95,7 @@ void add_typeinfo(Node *node) {
         case ND_LE:
             if (node->lhs->type && node->rhs->type &&
                 !is_same(node->lhs->type, node->rhs->type))
-                error("比較演算の右辺と左辺の型が一致していません");
+                error_at(node->str, "一致しない型の比較はできません");
             node->type = type_int();
             break;
         case ND_ASSIGN:
@@ -112,6 +116,8 @@ void add_typeinfo(Node *node) {
             node->type = type_ptr(node->lhs->type);
             break;
         case ND_DEREF:
+            if (!is_ptr(node->lhs->type))
+                error_at(node->str, "単項'*'の引数にpointer以外をとることはできません");
             node->type = node->lhs->type->ptr_to;
             break;
 

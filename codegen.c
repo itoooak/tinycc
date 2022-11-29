@@ -1,9 +1,9 @@
 #include "tinycc.h"
 
-const char *arg_reg_8byte[ARG_NUM_MAX] = 
+const char *arg_reg_8byte[ARG_NUM_MAX] =
     { "rdi", "rsi", "rdx", "rcx", "r8", "r9" };
 
-const char *arg_reg_4byte[ARG_NUM_MAX] = 
+const char *arg_reg_4byte[ARG_NUM_MAX] =
     { "edi", "esi", "edx", "ecx", "r8d", "r9d" };
 
 
@@ -88,14 +88,14 @@ void gen_funcdef(Node *node) {
     int arg_idx = node->argsnum;
     for (LVar *lvar = node->locals; lvar->next != NULL; prev_offset = lvar->offset, lvar = lvar->next) {
         lvar->offset = align_to(prev_offset + size_of(lvar->type), size_of(lvar->type));
-        
+
         if (lvar->is_arg) {
             // 現時点で関数の引数はint型のみ
             printf("    mov [rbp-%d], %s\n", lvar->offset, arg_reg_4byte[arg_idx-1]);
             arg_idx--;
         }
     }
-    
+
     int offset_sum = align_to(prev_offset, 16);
     printf("    sub rsp, %d\n", offset_sum);
 
