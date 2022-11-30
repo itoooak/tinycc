@@ -37,7 +37,7 @@ void expect(char *op) {
     if (token->kind != TK_RESERVED ||
         strlen(op) != token->len ||
         memcmp(token->str, op, token->len))
-        error("expected %s", op);
+        error_at(token->str, "expected %s", op);
     token = token->next;
 }
 
