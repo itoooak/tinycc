@@ -202,6 +202,9 @@ void gen(Node *node) {
             return;
         case ND_DECL:
             return;
+        case ND_SIZEOF:
+            printf("    push %d\n", node->val);
+            return;
     }
 
     gen(node->lhs);

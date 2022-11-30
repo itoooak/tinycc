@@ -120,6 +120,11 @@ void add_typeinfo(Node *node) {
                 error_at(node->str, "単項'*'の引数にpointer以外をとることはできません");
             node->type = node->lhs->type->ptr_to;
             break;
+        case ND_SIZEOF:
+            node->type = type_int();
+            if (node->lhs)
+                node->val = size_of(node->lhs->type);
+            break;
 
         case ND_RETURN:
         case ND_IF:

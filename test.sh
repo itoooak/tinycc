@@ -16,7 +16,7 @@ assert() {
     ./tinycc "$input" > tmp.s
     cc -o tmp tmp.s tmp2.o
     ./tmp
-    
+
     actual="$?"
 
     if [ "$actual" = "$expected" ]; then
@@ -84,5 +84,13 @@ assert 1 "int main() { int x; int y; x=1; y=2; return *(&y-1); }"
 assert 1 "int main() { int x; int y; x=1; y=2; return *(-1+&y); }"
 assert 2 "int main() { int x; int y; x=1; y=2; return *(&x+1); }"
 assert 2 "int main() { int x; int y; x=1; y=2; return *(1+&x); }"
+
+assert 4 "int main() { return sizeof 0; }"
+assert 4 "int main() { return sizeof(999); }"
+assert 4 "int main() { int x; return sizeof(x); }"
+assert 8 "int main() { int x; return sizeof(&x); }"
+assert 8 "int main() { int ***y; return sizeof(y); }"
+assert 4 "int main() { return sizeof(int); }"
+assert 8 "int main() { return sizeof(int*); }"
 
 echo OK

@@ -18,6 +18,7 @@ typedef enum {
     TK_WHILE,
     TK_FOR,
     TK_INT,
+    TK_SIZEOF,
 } TokenKind;
 
 typedef struct Token Token;
@@ -91,6 +92,7 @@ typedef enum {
     ND_ADDR,
     ND_DEREF,
     ND_DECL,
+    ND_SIZEOF,
 } NodeKind;
 
 #define ARG_NUM_MAX 6
@@ -106,7 +108,7 @@ struct Node {
     Node *init;     // initialization of ND_FOR
     Node *step;     // expression evaluated after iteration of ND_FOR
     Node *next;     // statement executed after this statement
-    int val;        // value of ND_NUM
+    int val;        // value of ND_NUM, ND_SIZEOF
     LVar *lvar;     // ND_LVAR
     char *funcname; // name of function in ND_FUNCCALL, ND_FUNCDEF
     Node *funcargs[ARG_NUM_MAX];

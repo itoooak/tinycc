@@ -317,6 +317,23 @@ Node *unary() {
         node = new_node_unary(ND_ADDR, unary(), op_token);
     else if (consume("*"))
         node = new_node_unary(ND_DEREF, unary(), op_token);
+    else if (token->kind == TK_SIZEOF) {
+        token = token->next;
+
+        if (consume("(")) {
+            if (token->kind == TK_INT) {
+                // 型を引数に取る場合
+                node = new_node_unary(ND_SIZEOF, NULL, op_token);
+                Type *ty = type();
+                node->val = size_of(ty);
+            } else {
+                node = new_node_unary(ND_SIZEOF, unary(), op_token);
+            }
+            expect(")");
+        } else {
+            node = new_node_unary(ND_SIZEOF, unary(), op_token);
+        }
+    }
     else
         node = primary();
 

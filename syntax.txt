@@ -2,7 +2,7 @@ program       = func_def+
 func_def      = type ident "(" (type ident ("," type ident)*)? ")" compound_stmt
                 /* ただし関数定義の引数は6個まで, かつ全てint型 */
                 /* 関数の返り値はint型のみ */
-stmt          = expr ";" 
+stmt          = expr ";"
               | "return" expr ";"
               | "if" "(" expr ")" stmt ("else" stmt)?
               | "while" "(" expr ")" stmt
@@ -20,6 +20,8 @@ mul           = unary ("*" unary | "/" unary)*
 unary         = ("+" | "-")? primary
               | "&" unary
               | "*" unary
+              | "sizeof" unary
+              | "sizeof" "(" type ")"
 primary       = num
               | ident ("(" (expr ("," expr)*)? ")")?
                 /* ただし関数呼び出しの引数は6個まで, かつ全てint型 */
