@@ -327,7 +327,8 @@ Node *unary() {
                 Type *ty = type();
                 node->val = size_of(ty);
             } else {
-                node = new_node_unary(ND_SIZEOF, unary(), op_token);
+                // "("がprimaryにおいて生成されたものである場合
+                node = new_node_unary(ND_SIZEOF, expr(), op_token);
             }
             expect(")");
         } else {
